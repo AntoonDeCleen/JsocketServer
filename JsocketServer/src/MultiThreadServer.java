@@ -13,12 +13,10 @@ public class MultiThreadServer{
    public static void main(String args[]) throws Exception { 
       ServerSocket ssock = new ServerSocket(8080);
       System.out.println("Listening");
-      int i = 0;
       while (true) {
-    	  i += 1;
-         Socket sock = ssock.accept();
-         System.out.println("Connected");
-         new Thread(new ClientThread(sock, i)).start();
+         Socket sock = ssock.accept();	
+         System.out.println("New connection");
+         new Thread(new ClientThread(sock)).start();
       }
    }
    public void run() {
