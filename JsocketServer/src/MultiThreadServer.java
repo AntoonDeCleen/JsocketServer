@@ -1,5 +1,3 @@
-import java.io.IOException;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -15,11 +13,8 @@ public class MultiThreadServer{
       System.out.println("Listening");
       while (true) {
          Socket sock = ssock.accept();	
-         System.out.println("New connection");
+         System.out.println("New request");
          new Thread(new ClientThread(sock)).start();
       }
-   }
-   public void run() {
-      
    }
 }

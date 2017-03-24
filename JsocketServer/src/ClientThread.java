@@ -16,8 +16,8 @@ public class ClientThread implements Runnable{
 	private BufferedReader in;
 	private PrintWriter out;
 	public boolean ended = false;
-	private static final String basePath = "C:\\Users\\Beheerder\\Desktop\\ServerResources";
-	private Command command;
+	//private static final String basePath = "C:\\Users\\Beheerder\\Desktop\\ServerResources";
+	private static final String basePath = "/home/r0464173/Desktop/CNServerresources/";
 	private boolean firstLine = true;
 	private boolean badCommand = false;
 	private FileInputStream fin;
@@ -27,7 +27,6 @@ public class ClientThread implements Runnable{
 	private String firstLineS;
 	private boolean commandExecuted = false;
 	private boolean hostFound = false;
-	private boolean lengthFound = false;
 	
 	public ClientThread(Socket csocket){
 		this.csocket = csocket;
@@ -74,7 +73,6 @@ public class ClientThread implements Runnable{
     			 if (firstLineS.startsWith("GET")){
     				 System.out.println("Get command received");
     				 
-    				 command = command.GET;
     				 resource = firstLineS.replace("GET ", "");
     				 resource = resource.replace(" HTTP/1.1", "");
     				 if (resource.equals("/")){
@@ -89,6 +87,12 @@ public class ClientThread implements Runnable{
     				 
     				 //System.out.println("resource "+resource);
     				 File file = new File(basePath+resource);
+    				 if (!file.exists()){
+    					 pout.println("404 NOT FOUND");
+    					 csocket.close();
+    					 return;
+    				 }
+    				 
     				 fin = new FileInputStream(file);
     				 reader = new BufferedReader(new InputStreamReader(fin, "utf-8"));
     				 
@@ -145,7 +149,6 @@ public class ClientThread implements Runnable{
     				 }
         				 
         			 }else if(firstLineS.startsWith("HEAD")){
-        				 command = command.HEAD;
         				 System.out.println("Head command received");
         
         				 resource = firstLineS.replace("HEAD ", "");
@@ -192,12 +195,10 @@ public class ClientThread implements Runnable{
         			 }else if(firstLineS.startsWith("PUT")){
         				 System.out.println("Put command received");
         				 
-        				 command = command.PUT;
-        				 
         				 resource = firstLineS.replace("PUT ", "");
         				 resource = resource.replace(" HTTP/1.1", "");
         				 if (resource.equals("/")){
-        					 resource = "/postdump.html";
+        					 resource = "/dump.html";
         				 }
         				 System.out.println("resource: "+ resource);
         				 if (!resource.contains(".html")){
@@ -235,18 +236,18 @@ public class ClientThread implements Runnable{
         				 pout.println("HTTP/1.1 200 OK	");
         				 pout.println("PUT succesfully received and written at "+resource);
         				 commandExecuted =true;
+        				 in.close();
+        				 pout.close();
         				 csocket.close();
         				 
         				 
         			 }else if(firstLineS.startsWith("POST")){
         				 System.out.println("Post command received");
 
-        				 
-        				 command = command.POST;
            				 resource = firstLineS.replace("POST ", "");
         				 resource = resource.replace(" HTTP/1.1", "");
         				 if (resource.equals("/")){
-        					 resource = "/postdump.html";
+        					 resource = "/dump.html";
         				 }
         				 System.out.println("resource: "+ resource);
         				 if (!resource.contains(".html")){
@@ -294,15 +295,7 @@ public class ClientThread implements Runnable{
 	        		 
 	        	
 	        	 }}
-	         
-//	         
-	   
-	         
-	         //String httpResponse = "HTTP/1.1 200 OK\r\n\r\n"; 
-	         //csocket.getOutputStream().write(httpResponse.getBytes("UTF-8"));
-	         
-	         
-	         // pstream.close();
+	        
 	       catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
