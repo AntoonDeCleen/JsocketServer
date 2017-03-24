@@ -9,7 +9,11 @@ public class MultiThreadServer{
       this.i = i;
    }
    public static void main(String args[]) throws Exception { 
-      ServerSocket ssock = new ServerSocket(8080);
+	  int port = 8080;
+	  if (!(args.length == 0)){
+		  port = Integer.parseInt(args[0]);
+	  }
+      ServerSocket ssock = new ServerSocket(port);
       System.out.println("Listening");
       while (true) {
          Socket sock = ssock.accept();	
